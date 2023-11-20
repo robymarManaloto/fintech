@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Crowdfunding Campaign Preview</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <!-- Add your custom CSS styles here -->
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat&display=swap">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+      <link rel="icon" href="https://drive.google.com/uc?export=view&id=1nQp5dFtoBYU044Y8zxUw16v8_jlyBhYN" type="image/png">
+
+      <style>
+         body {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+         font-family: 'Montserrat', sans-serif;
+         }
+         .loader-container {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         display: none;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+         background: rgba(255, 255, 255, 0.9);
+         z-index: 9999; /* Place the loader above everything else */
+         }
+         .show{
+         display: flex;
+         }
+         .loading-text {
+         font-size: 18px;
+         margin-top: 20px;
+         }
+         .waves-container {
+         display: flex;
+         align-items: flex-end;
+         }
+         .wave {
+         width: 5px;
+         height: 100px;
+         background: linear-gradient(45deg, cyan, #fff);
+         margin: 0 10px;
+         border-radius: 20px;
+         }
+         .wave:nth-child(1) {
+         animation: wave 1s linear infinite 0.1s;
+         }
+         .wave:nth-child(2) {
+         animation: wave 1s linear infinite 0.2s;
+         }
+         .wave:nth-child(3) {
+         animation: wave 1s linear infinite 0.3s;
+         }
+         .wave:nth-child(4) {
+         animation: wave 1s linear infinite 0.4s;
+         }
+         .wave:nth-child(5) {
+         animation: wave 1s linear infinite 0.5s;
+         }
+         .wave:nth-child(6) {
+         animation: wave 1s linear infinite 0.6s;
+         }
+         .wave:nth-child(7) {
+         animation: wave 1s linear infinite 0.7s;
+         }
+         .wave:nth-child(8) {
+         animation: wave 1s linear infinite 0.8s;
+         }
+         .wave:nth-child(9) {
+         animation: wave 1s linear infinite 0.9s;
+         }
+         .wave:nth-child(10) {
+         animation: wave 1s linear infinite 1s;
+         }
+         @keyframes wave {
+         0% {
+         transform: scaleY(0);
+         }
+         50% {
+         transform: scaleY(1);
+         }
+         100% {
+         transform: scaleY(0);
+         }
+         }
+         img:hover {
+         opacity: 0.7; /* Reduce opacity on hover */
+         }
+      </style>
+   </head>
+   <body>
+      <div class="loader-container">
+         <div class="waves-container">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+         </div>
+         <div class="loading-text"><p style="font-weight: 700;">Generating Campaign Page. Please wait...</p></div>
+      </div>
+      <div class="container mt-5">
+         <div class="row justify-content-between">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-back" id="backBtn">
+                      <i class="fa-solid fa-arrow-left"></i>
+                      Back
+                    </button>
+                    <h1 class="ml-3">Campaign Preview</h1>
+                </div>
+            </div>
+            <div class="col-md-6 text-right">
+               <button class="btn btn-success" id="submitBtn">
+               <i class="fa-solid fa-check-to-slot"></i>
+               Submit For Approval
+               </button>
+               <button class="btn btn-primary" id="btn-regenerate">
+               <i class="fa-solid fa-arrow-rotate-right"></i>
+               Regenerate
+               </button>
+               <button class="btn btn-discard" id="cancelBtn">
+               <i class="fa-solid fa-trash"></i>
+               Cancel
+               </button>
+            </div>
+         </div>
+      </div>
+      <div class="container mt-5">
+         <div class="row">
+            <div class="col-md-8">
+               <img src="https://picsum.photos/800/600?random" id="img_cover" class="img-fluid" alt="Campaign Image Placeholder">
+               
+            </div>
+            <div class="col-md-4">
+               <h1 class="text-primary">{{ data.title }}</h1>
+               <h3 class="text-secondary">Support Our Campaign</h3> <!-- Add your campaign title here -->
+               <p class="lead">Help us bring this project to life!</p>
+               <div class="mt-4">
+                  <button class="btn btn-primary btn-block btn-pledge">Pledge</button>
+               </div>
+               <div class="mt-4">
+                  <h4>Share this Campaign</h4>
+                  <div class="social-icons">
+                     <a href="#" class="btn btn-info btn-sm btn-social" disabled><i class="fab fa-facebook-f"></i> Facebook</a>
+                     <a href="#" class="btn btn-info btn-sm btn-social" disabled><i class="fab fa-twitter"></i> Twitter</a>
+                     <a href="#" class="btn btn-info btn-sm btn-social" disabled><i class="fas fa-link"></i> Copy Link</a>
+                  </div>
+               </div>
+            </div>
+         </div>         
+         <div class="row mt-5">
+            <div class="col-md-8">
+               <div class="card">
+                  <input type="hidden" name="html_data" id="html_data" value="">
+                  <div class="card-body campaign-content" contenteditable="true">
+                     <!-- Your HTML content -->
+                     {{ page|safe }}
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-4">
+               <div class="card">
+                  <div class="card-body">
+                     <h3 class="text-primary">Rewards</h3>
+                     {% for reward in data.rewards %}
+                     <div class="mb-3">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-primary"><i class="fa-solid fa-gift"></i>&nbsp;{{ reward.title }}</h3>
+                                    <p>{{ reward.description }}</p>
+                                    <p><span style="font-size: 24px;">₱{{ reward.amount }}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                                   
+                     {% endfor %}
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      <!-- Add Font Awesome for icons -->
+      <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+      <script>
+         $(document).ready(function () {
+             // Function to update the HTML data from the div with the ID 'myDiv'
+             function updateHtmlData() {
+                 var htmlData = $("#campaign_page").html();
+                 $("#html_data").val(htmlData);
+             }
+         
+             // Initial update when the page loads
+             updateHtmlData();
+         
+             // Add event listeners to all images with ids starting with "img_"
+             const imageElements = document.querySelectorAll("[id^='img_']");
+         
+             imageElements.forEach((img) => {
+                 img.addEventListener("click", function () {
+                     // Create a file input element
+                     const fileInput = document.createElement("input");
+                     fileInput.type = "file";
+         
+                     // Trigger a click event on the file input
+                     fileInput.click();
+         
+                     // Listen for changes in the file input (i.e., when a file is selected)
+                     fileInput.addEventListener("change", function () {
+                         const file = fileInput.files[0]; // Get the selected file
+         
+                         // Check if a file was selected
+                         if (file) {
+                             const reader = new FileReader();
+         
+                             // When the file is loaded, update the src attribute of the clicked image
+                             reader.onload = function (e) {
+                                 img.src = e.target.result;
+                                 // Update the HTML data whenever an image changes
+                                 updateHtmlData();
+                             };
+         
+                             // Read the selected file as a data URL
+                             reader.readAsDataURL(file);
+                         }
+                     });
+                 });
+             });
+         
+             // Add an event listener to the form for submission
+             $("form").submit(function () {
+                 // Update the HTML data before form submission
+                 updateHtmlData();
+             });
+         });
+         
+         
+         
+      </script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.1/dist/sweetalert2.all.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script>
+         $(document).ready(function() {
+             // Handle form submission
+             $("#btn-regenerate").click(function() {
+         
+                 // Serialize the form data
+                 var formData = $(this).serialize();
+                 
+                 $("div.loader-container").addClass("show");
+         
+                 // Make the AJAX request
+                 $.ajax({
+                     type: "POST",
+                     url: "{% url 'generate_campaign' %}", // Replace with your actual URL
+                     data: formData,
+                     success: function(response) {
+                         // Check the response to determine success or failure
+                         if (response.success) {
+                          location.reload();
+                         } else {
+                             $("div.loader-container").removeClass("show");
+                             Swal.fire({
+                                 icon: 'error',
+                                 title: 'Oops...',
+                                 text: 'Something went wrong!',
+                                 footer: '<a href="#">Contact support</a>' // You can customize this
+                             });
+                         }
+                     },
+                     error: function(xhr, textStatus, errorThrown) {
+                         $("div.loader-container").removeClass("show");
+                         Swal.fire({
+                             icon: 'error',
+                             title: 'Oops...',
+                             text: 'Something went wrong!',
+                             footer: '<a href="#">Contact support</a>' // You can customize this
+                         });
+                     }
+                 });
+             });
+         });
+
+         document.getElementById('submitBtn').addEventListener('click', function () {
+            Swal.fire({
+              title: 'Submit For Approval',
+              text: 'Are you sure you want to submit this for approval?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, submit it!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // You can place your submission logic here
+                Swal.fire('Submitted!', 'Your request has been submitted.', 'success');
+              }
+            });
+          });
+
+          document.getElementById('cancelBtn').addEventListener('click', function () {
+            Swal.fire({
+              title: 'Cancel Action',
+              text: 'Are you certain you wish to cancel this generated page?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, cancel it!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // You can place your cancellation logic here
+                Swal.fire({
+                  title: 'Cancelled!',
+                  text: 'You will be directed to the Speech Recognition Page.',
+                  icon: 'success',
+                  confirmButtonText: 'OK'
+                }).then(() => {
+                  // Redirect to the desired URL after clicking "OK"
+                  window.location.href = "{% url 'speech_recognition' %}";
+                });
+
+              }
+            });
+          });
+
+          document.getElementById('backBtn').addEventListener('click', function () {
+            Swal.fire({
+              title: 'Go Back',
+              text: 'Are you sure you want to go back?',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, go back!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // You can either navigate back or perform other actions here
+                history.back(); // This will navigate back to the previous page
+              }
+            });
+          });
+      </script>
+
+
+    <script>
+        function fixDuplicateIds() {
+            const idMap = new Map();
+
+            // Get all images within the contenteditable div
+            const contenteditableDiv = document.querySelector('[contenteditable="true"]');
+            const images = contenteditableDiv.querySelectorAll('img_');
+
+            images.forEach(image => {
+                const id = image.id;
+                if (idMap.has(id)) {
+                    // If a duplicate ID is found, generate a new unique ID
+                    let count = idMap.get(id);
+                    count++;
+                    const newId = `${id}_${count}`;
+                    image.id = newId;
+                    idMap.set(newId, 1);
+                } else {
+                    // Otherwise, add the ID to the map
+                    idMap.set(id, 1);
+                }
+            });
+        }
+
+        // Call the function to fix duplicate IDs
+        fixDuplicateIds();
+    </script>
+
+   </body>
+</html>

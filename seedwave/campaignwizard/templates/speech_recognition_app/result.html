@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>AI Summary</title>
+      <!-- Include Bootstrap CSS from a CDN -->     
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat&display=swap">
+      <link rel="icon" href="https://drive.google.com/uc?export=view&id=1nQp5dFtoBYU044Y8zxUw16v8_jlyBhYN" type="image/png">
+
+      <style>
+         .highlight-empty {
+         border: 2px solid red;
+         }
+         /* Apply the .highlight-empty border to empty input fields */
+         .form-control.highlight-empty:empty {
+         border: 2px solid red;
+         }
+         /* Hide the border and outline for all input fields */
+         .form-control {
+         border: none;
+         outline:none;
+         } 
+         /* Add a border when the input is focused (clicked) */
+         .form-control:focus {
+         border: 1px solid #ced4da; /* You can change the border color to match your design */
+         }
+         label {
+         font-weight: bold;
+         }
+         body {
+         margin: 0;
+         padding: 0;
+         box-sizing: border-box;
+         font-family: 'Montserrat', sans-serif;
+         }
+         .loader-container {
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100vw;
+         height: 100vh;
+         display: none;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+         background: rgba(255, 255, 255, 0.9);
+         z-index: 9999; /* Place the loader above everything else */
+         }
+         .show{
+         display: flex;
+         }
+         .loading-text {
+         font-size: 18px;
+         margin-top: 20px;
+         }
+         .waves-container {
+         display: flex;
+         align-items: flex-end;
+         }
+         .wave {
+         width: 5px;
+         height: 100px;
+         background: linear-gradient(45deg, cyan, #fff);
+         margin: 0 10px;
+         border-radius: 20px;
+         }
+         .wave:nth-child(1) {
+         animation: wave 1s linear infinite 0.1s;
+         }
+         .wave:nth-child(2) {
+         animation: wave 1s linear infinite 0.2s;
+         }
+         .wave:nth-child(3) {
+         animation: wave 1s linear infinite 0.3s;
+         }
+         .wave:nth-child(4) {
+         animation: wave 1s linear infinite 0.4s;
+         }
+         .wave:nth-child(5) {
+         animation: wave 1s linear infinite 0.5s;
+         }
+         .wave:nth-child(6) {
+         animation: wave 1s linear infinite 0.6s;
+         }
+         .wave:nth-child(7) {
+         animation: wave 1s linear infinite 0.7s;
+         }
+         .wave:nth-child(8) {
+         animation: wave 1s linear infinite 0.8s;
+         }
+         .wave:nth-child(9) {
+         animation: wave 1s linear infinite 0.9s;
+         }
+         .wave:nth-child(10) {
+         animation: wave 1s linear infinite 1s;
+         }
+         @keyframes wave {
+         0% {
+         transform: scaleY(0);
+         }
+         50% {
+         transform: scaleY(1);
+         }
+         100% {
+         transform: scaleY(0);
+         }
+         }
+      </style>
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.1/dist/sweetalert2.min.css">
+   </head>
+   <body>
+      <div class="loader-container">
+         <div class="waves-container">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+         </div>
+         <div class="loading-text"><p style="font-weight: 700;">Generating Campaign Page. Please wait...</p></div>
+      </div>
+      <header class="bg-dark text-white text-center py-4">
+         <div class="container">
+            <div class="row align-items-center">
+               <div class="col-1">
+                  <a onclick="history.back()" style="color:white;">
+                    <i class="fa-solid fa-arrow-left" style="font-size: 46px;"></i>
+                  </a>
+               </div>
+               <div class="col-10">
+                  <h1 class="font-weight-bold">AI Summary</h1>
+               </div>
+               <div class="col-1">
+                  <!-- Spacer column for layout purposes -->
+               </div>
+            </div>
+         </div>
+      </header>
+      <div class="container mt-5">
+         <form id="campaignForm" method="post">
+            {% csrf_token %}
+            <div class="form-group">
+               <label for="input1">Campaign Title</label>
+               <div class="input-group align-items-baseline">
+                  <input type="text" id="input1" class="form-control" name="title" value="{{ text.title }}" required>
+                  <div class="input-group-append mt-2">
+                     <button class="btn btn-danger" type="button" data-input="input1" data-toggle="modal" data-target="#input1Modal"><i class="fa-solid fa-microphone"></i></button>
+                  </div>
+               </div>
+            </div>
+            <div class="form-group">
+               <label for="input2">Campaign Description</label>
+               <div class="input-group align-items-baseline">
+                  <input type="text" id="input2" class="form-control" name="description" value="{{ text.description }}" required>
+                  <div class="input-group-append mt-2">
+                     <button class="btn btn-danger" type="button" data-input="input2" data-toggle="modal" data-target="#input2Modal"><i class="fa-solid fa-microphone"></i></button>
+                  </div>
+               </div>
+            </div>
+            <div class="form-group">
+               <label for="input3">Category</label>
+               <div class="input-group align-items-baseline">
+                  <input type="text" id="input3" class="form-control" name="category" value="{{ text.category }}" required>
+                  <div class="input-group-append mt-2">
+                     <button class="btn btn-danger" type="button" data-input="input3" data-toggle="modal" data-target="#input3Modal"><i class="fa-solid fa-microphone"></i></button>
+                  </div>
+               </div>
+            </div>
+            <div class="form-group">
+               <label for="input4">Funding Goal</label>
+               <div class="input-group align-items-baseline">
+                ₱<input type="number" id="input4" class="form-control" name="funding_goal" value="{{ text.fundgoal }}" required>
+                  <div class="input-group-append mt-2">
+                     <button class="btn btn-danger" type="button" data-input="input4" data-toggle="modal" data-target="#input4Modal"><i class="fa-solid fa-microphone"></i></button>
+                  </div>
+               </div>
+            </div>
+            <div class="form-group">
+               <label for="input5">Campaign Duration</label>
+               <div class="input-group align-items-baseline">
+                  Days: <input type="number" id="input5" class="form-control" name="duration" value="{{ text.duration }}" required> 
+                  <div class="input-group-append mt-2">
+                     <button class="btn btn-danger" type="button" data-input="input5" data-toggle="modal" data-target="#input5Modal"><i class="fa-solid fa-microphone"></i></button>
+                  </div>
+               </div>
+            </div>
+            <div class="form-group">
+               <label>Rewards</label>
+               <ul>
+                  {% for reward in text.rewards %}
+                  <li>
+                     <div class="row">
+                        <div class="col">
+                           <input type="text" placeholder="Name" name="reward_title" class="form-control" value="{{ reward.title }}" required> 
+                        </div>
+                        <div class="col">
+                           <input type="text" placeholder="Description" name="reward_description" class="form-control" value="{{ reward.description }}" required>
+                        </div>
+                        <div class="col">
+                            <div style="display: flex;">
+                                <span style="flex: 0 0 auto;">₱</span>
+                                <input type="text" placeholder="Amount" name="reward_amount" class="form-control" value="{{ reward.amount }}" required>
+                            </div>
+                        </div>
+                                              
+                     </div>
+                  </li>
+                  {% endfor %}
+               </ul>
+            </div>
+            <div class="text-center" style="margin: 50px;">
+               <button type="submit" class="btn btn-primary"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Preview </button>
+            </div>
+         </form>
+      </div>
+      <!-- Modals for each input -->
+      <div class="modal fade" id="input1Modal" tabindex="-1" role="dialog" aria-labelledby="input1ModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <p class="modal-title" id="input1ModalLabel"><strong>Campaign Title</strong><br>The campaign title is the main headline that represents your project. It should be clear, concise, and compelling, summarizing what your campaign is about in a few words.</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <div class="modal-body text-center justify-content-center">
+                  <div class="form-group">
+                     <label for="inputTranscription">Transcription</label>
+                     <input type="text" field-category="title" id="input1Transcription" class="form-control" readonly>
+                  </div>
+                  <div class="spinner form-group" style="display: none; margin: 10px">
+                     <div class="spinner-border text-primary" role="status"></div>
+                     <div><i class="fa-solid fa-wand-magic-sparkles"></i> Analyzing Transcript...</div>
+                  </div>
+                  <div class="analysis form-group"  style="display: none; margin-top: 10px">
+                     <label for="inputAnalysis">Analyzed Text</label>
+                     <input type="text" id="input1Analysis" class="form-control" readonly hidden>
+                     <p style="margin-top: 30px; text-align: center;"><i>Are you satisfied with the outcome?</i></p>
+                  </div>
+               </div>
+               <div class="modal-footer text-center justify-content-center">
+                  <button class="btn btn-success save-transcription" data-input="input1"  data-dismiss="modal" hidden>Yes</button>
+                  <button class="btn btn-outline-dark start-transcribing" data-input="input1"><i class="fa-regular fa-circle-play"></i> Start Transcribing</button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="modal fade" id="input2Modal" tabindex="-1" role="dialog" aria-labelledby="input2ModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                <p class="modal-title" id="input2ModalLabel"><strong>Campaign Description</strong><br>The campaign description is a detailed explanation of your project's purpose, goals, and why people should support it.</p>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <div class="modal-body text-center justify-content-center">
+                  <div class="form-group">
+                     <label for="inputTranscription">Transcription</label>
+                     <input type="text" field-category="description" id="input2Transcription" class="form-control" readonly>
+                  </div>
+                  <div class="spinner form-group" style="display: none; margin: 10px">
+                     <div class="spinner-border text-primary" role="status"></div>
+                     <div><i class="fa-solid fa-wand-magic-sparkles"></i> Analyzing Transcript...</div>
+                  </div>
+                  <div class="analysis form-group"  style="display: none; margin-top: 10px">
+                     <label for="inputAnalysis">Analyzed Text</label>
+                     <input type="text" id="input2Analysis" class="form-control" readonly hidden>
+                     <p style="margin-top: 30px; text-align: center;"><i>Are you satisfied with the outcome?</i></p>
+                  </div>
+               </div>
+               <div class="modal-footer text-center justify-content-center">
+                  <button class="btn btn-success save-transcription" data-input="input2"  data-dismiss="modal" hidden>Yes</button>
+                  <button class="btn btn-outline-dark start-transcribing" data-input="input2"><i class="fa-regular fa-circle-play"></i> Start Transcribing</button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="modal fade" id="input3Modal" tabindex="-1" role="dialog" aria-labelledby="input3ModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <p class="modal-title" id="input3ModalLabel"><strong>Campaign Category</strong><br>The category refers to the broader theme or industry your project falls under. It helps potential backers find your campaign when they are searching for projects that interest them. Common categories include technology, art, music, health, and more.</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <div class="modal-body text-center justify-content-center">
+                  <div class="form-group">
+                     <label for="inputTranscription">Transcription</label>
+                     <input type="text" field-category="category" id="input3Transcription" class="form-control" readonly>
+                  </div>
+                  <div class="spinner form-group" style="display: none; margin: 10px">
+                     <div class="spinner-border text-primary" role="status"></div>
+                     <div><i class="fa-solid fa-wand-magic-sparkles"></i> Analyzing Transcript...</div>
+                  </div>
+                  <div class="analysis form-group"  style="display: none; margin-top: 10px">
+                     <label for="inputAnalysis">Analyzed Text</label>
+                     <input type="text" id="input3Analysis" class="form-control" readonly hidden>
+                     <p style="margin-top: 30px; text-align: center;"><i>Are you satisfied with the outcome?</i></p>
+                  </div>
+               </div>
+               <div class="modal-footer text-center justify-content-center">
+                  <button class="btn btn-success save-transcription" data-input="input3"  data-dismiss="modal" hidden>Yes</button>
+                  <button class="btn btn-outline-dark start-transcribing" data-input="input3"><i class="fa-regular fa-circle-play"></i> Start Transcribing</button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="modal fade" id="input4Modal" tabindex="-1" role="dialog" aria-labelledby="input4ModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                <p class="modal-title" id="input4ModalLabel"><strong>Campaign Description</strong><br>The funding goal is the specific amount of money you need to successfully complete your project. It should be based on a realistic assessment of your project's costs and expenses. This is the minimum amount you need to reach to carry out your project.</p>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <div class="modal-body text-center justify-content-center">
+                  <div class="form-group">
+                     <label for="inputTranscription">Transcription</label>
+                     <input type="text" field-category="funding_goal" id="input4Transcription" class="form-control" readonly>
+                  </div>
+                  <div class="spinner form-group" style="display: none; margin: 10px">
+                     <div class="spinner-border text-primary" role="status"></div>
+                     <div><i class="fa-solid fa-wand-magic-sparkles"></i> Analyzing Transcript...</div>
+                  </div>
+                  <div class="analysis form-group"  style="display: none; margin-top: 10px">
+                     <label for="inputAnalysis">Analyzed Text</label>
+                     <input type="text" id="input4Analysis" class="form-control" readonly hidden>
+                     <p style="margin-top: 30px; text-align: center;"><i>Are you satisfied with the outcome?</i></p>
+                  </div>
+               </div>
+               <div class="modal-footer text-center justify-content-center">
+                  <button class="btn btn-success save-transcription" data-input="input4"  data-dismiss="modal" hidden>Yes</button>
+                  <button class="btn btn-outline-dark start-transcribing" data-input="input4"><i class="fa-regular fa-circle-play"></i> Start Transcribing</button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div class="modal fade" id="input5Modal" tabindex="-1" role="dialog" aria-labelledby="input5ModalLabel" aria-hidden="true">
+         <div class="modal-dialog" role="document">
+            <div class="modal-content">
+               <div class="modal-header">
+                <p class="modal-title" id="input5ModalLabel"><strong>Campaign Duration</strong><br>The campaign duration is the number of days your crowdfunding campaign will run. This period can vary depending on your project's needs and goals.</p>                
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+               </div>
+               <div class="modal-body text-center justify-content-center">
+                  <div class="form-group">
+                     <label for="inputTranscription">Transcription</label>
+                     <input type="text" field-category="duration" id="input5Transcription" class="form-control" readonly>
+                  </div>
+                  <div class="spinner form-group" style="display: none; margin: 10px">
+                     <div class="spinner-border text-primary" role="status"></div>
+                     <div><i class="fa-solid fa-wand-magic-sparkles"></i> Analyzing Transcript...</div>
+                  </div>
+                  <div class="analysis form-group"  style="display: none; margin-top: 10px">
+                     <label for="inputAnalysis">Analyzed Text</label>
+                     <input type="text" id="input5Analysis" class="form-control" readonly hidden>
+                     <p style="margin-top: 30px; text-align: center;"><i>Are you satisfied with the outcome?</i></p>
+                  </div>
+               </div>
+               <div class="modal-footer text-center justify-content-center">
+                  <button class="btn btn-success save-transcription" data-input="input5"  data-dismiss="modal" hidden>Yes</button>
+                  <button class="btn btn-outline-dark start-transcribing" data-input="input5"><i class="fa-regular fa-circle-play"></i> Start Transcribing</button>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Include Bootstrap JS and jQuery from a CDN -->
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      <script>
+         const transcriptionInputs = document.querySelectorAll(".form-control");
+         const transcriptionModals = document.querySelectorAll(".modal");
+         const startTranscribingButtons = document.querySelectorAll(".start-transcribing");
+         const saveTranscriptionButtons = document.querySelectorAll(".save-transcription");
+         
+         let recognition;
+         let isTranscribing = false;
+         let activeInput = null;
+         let transcription = "";
+         let fieldCategory = null;
+         
+         // Check for browser support
+         if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+             recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+         
+             recognition.continuous = true;
+             recognition.lang = 'fil-PH'; 
+             
+             recognition.onstart = () => {
+                 isTranscribing = true;
+                 setActiveInput(activeInput, isTranscribing);
+             };
+         
+             recognition.onresult = (event) => {
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcription += event.results[i][0].transcript + ' '; // Append recognized phrase with a space
+                }
+                if (activeInput) {
+                    const inputField = document.getElementById(activeInput + "Transcription");
+                    inputField.value += transcription; // Append to existing content
+         
+                    transcriptionModals.forEach(modal => {
+                        const modalId = modal.getAttribute("id");
+                        if (modalId === activeInput + "Modal") {
+                            if( transcription == ""){
+                                modal.querySelector(".start-transcribing").disabled = true;
+                            }else{
+                                modal.querySelector(".start-transcribing").disabled = false;
+                            }
+                        }
+                    });
+                }
+            };
+            
+             recognition.onend = () => {
+                const fieldCategory = document.getElementById(activeInput + "Transcription").getAttribute("field-category");
+                const inputAnalysis = document.getElementById(activeInput + "Analysis");
+         
+               if (transcription == ""){
+                  isTranscribing = false;
+                  setActiveInput(activeInput, null);
+                  recognition.stop();
+               }else{
+                  isTranscribing = false;
+                  setActiveInput(activeInput, isTranscribing);
+                  $.ajax({
+                     url: "{% url 'input_analyze' %}",
+                     type: 'POST',
+                     data: { transcription: transcription, field: fieldCategory },
+                     success: function(response) {
+                           if (response.success) {
+                              inputAnalysis.hidden = false;
+                              inputAnalysis.value = response.answer;
+                              setActiveInput(activeInput, false);
+                           } else {
+                              inputField.value = "It seems something went wrong. Please try again.";
+                              setActiveInput(activeInput, false);
+                           }
+                     },
+                     error: function(xhr, textStatus, errorThrown) {
+                           inputField.value = "It seems something went wrong. Please try again.";
+                           setActiveInput(activeInput, false);
+                     }
+                  
+                  });
+               }
+             };
+         
+             startTranscribingButtons.forEach(button => {
+                 button.addEventListener("click", () => {
+                     const inputId = button.getAttribute("data-input");
+                     if (inputId) {
+                         setActiveInput(inputId, !isTranscribing);
+                         if (!isTranscribing) {
+                             activeInput = inputId;
+                             recognition.start();
+                             button.disabled = true;
+                         } else {
+                             recognition.stop();
+                             activeInput = inputId;
+                         }
+                     }
+                 });
+             });
+         
+             saveTranscriptionButtons.forEach(button => {
+                 button.addEventListener("click", () => {
+                     const inputId = button.getAttribute("data-input");
+                     if (inputId) {
+                         const transcription = document.getElementById(inputId + "Analysis").value;
+                         document.getElementById(inputId).value = transcription;
+                         checkEmptyInput(inputId);
+                     }
+                 });
+             });
+         
+             function setActiveInput(inputId, isTranscribing) {
+                 transcriptionModals.forEach(modal => {
+                     const modalId = modal.getAttribute("id");
+                     const inputField = document.getElementById(inputId + "Analysis");
+                     const transcriptField = document.getElementById(inputId + "Transcription");
+                     const spinner = modal.querySelector(".spinner");
+                     const analysis = modal.querySelector(".analysis");
+                     
+                     if (modalId === inputId + "Modal") {
+                         if (isTranscribing == true) {
+                             spinner.style.display = "none";
+                             
+                             modal.querySelector(".save-transcription").hidden = true;
+                             analysis.style.display = "none";
+         
+                             modal.querySelector(".start-transcribing").innerHTML = "<i class='fa-regular fa-circle-stop'></i> Stop Transcribing";
+                             
+                             inputField.value = "";
+                             transcriptField.value = "";
+                             transcription = "";
+                         }else if( isTranscribing == false){
+                              if (inputField.value != ""){
+                                 modal.querySelector(".start-transcribing").textContent = "No";
+                                 modal.querySelector(".start-transcribing").classList.remove("btn-outline-dark");
+                                 modal.querySelector(".start-transcribing").classList.add("btn-danger");
+                                 modal.querySelector(".save-transcription").hidden = false;
+                                 spinner.style.display = "none";
+                                 analysis.style.display = "inline-block";
+                           }else{
+                                 modal.querySelector(".start-transcribing").innerHTML = "<i class='fa-solid fa-rotate-right'></i> Try Again?";
+                                 spinner.style.display = "inline-block";
+                                 analysis.style.display = "none";
+                           }
+                         }else if( isTranscribing == null){
+                              alert("Speech recognition did not detect anything. Please check if your microphone is working and try again.");
+                              modal.querySelector(".start-transcribing").innerHTML = "<i class='fa-solid fa-rotate-right'></i> Try Again?";
+                              modal.querySelector(".start-transcribing").disabled = false;
+                              analysis.style.display = "none";
+                        }
+                     }
+                 });
+             }
+         } else {
+             alert("Browser doesn't support speech recognition");
+         }
+         
+         
+         // Function to check if an input is empty and apply the highlight class if needed
+         function checkEmptyInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (input) {
+                if (input.value.trim() === "") {
+                    input.classList.add("highlight-empty");
+                } else {
+                    input.classList.remove("highlight-empty");
+                }
+                // Find the button with the data-input attribute matching the inputId
+                const button = document.querySelector(`button[data-input="${inputId}"]`);
+                if (button) {
+                    if (input.classList.contains("highlight-empty")) {
+                        // If the input is empty or highlighted, show the button
+                        button.style.display = "block";
+                    } else {
+                        // If the input is not empty and not highlighted, hide the button
+                        button.style.display = "none";                        
+                    }
+                }
+            }
+         }
+         
+         // Listen for input changes and check if they're empty
+         transcriptionInputs.forEach(input => {
+            input.addEventListener("input", () => {
+                checkEmptyInput(input.id);
+            });
+         });
+         
+         // Check input boxes for emptiness after the page has loaded
+         window.addEventListener("load", () => {
+            for (let i = 1; i <= 8; i++) {
+                checkEmptyInput("input" + i);
+            }
+         });
+         
+      </script>
+       
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.1/dist/sweetalert2.all.min.js"></script>
+      <script>
+         $(document).ready(function() {
+             // Handle form submission
+             $("#campaignForm").submit(function(event) {
+                 event.preventDefault(); // Prevent the default form submission
+         
+                 // Serialize the form data
+                 var formData = $(this).serialize();
+                 
+                 $("div.loader-container").addClass("show");
+         
+                 // Make the AJAX request
+                 $.ajax({
+                     type: "POST",
+                     url: "{% url 'generate_campaign' %}", // Replace with your actual URL
+                     data: formData,
+                     success: function(response) {
+                         // Check the response to determine success or failure
+                         if (response.success) {
+                             window.location.href = "{% url 'preview_campaign_view' %}";
+                         } else {
+                             $("div.loader-container").removeClass("show");
+                             Swal.fire({
+                                 icon: 'error',
+                                 title: 'Oops...',
+                                 text: 'Something went wrong!',
+                                 footer: '<a href="#">Contact support</a>' // You can customize this
+                             });
+                         }
+                     },
+                     error: function(xhr, textStatus, errorThrown) {
+                         $("div.loader-container").removeClass("show");
+                         Swal.fire({
+                             icon: 'error',
+                             title: 'Oops...',
+                             text: 'Something went wrong!',
+                             footer: '<a href="#">Contact support</a>' // You can customize this
+                         });
+                     }
+                 });
+             });
+         });
+      </script>
+
+   </body>
+</html>
